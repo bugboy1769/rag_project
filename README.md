@@ -2,7 +2,7 @@
 
 A modular RAG system that bridges the gap between **Semantic Search** (content) and **Topological Reasoning** (structure).
 
-## 🚀 Current Architecture: Semantic Graph RAG
+## Current Architecture: Semantic Graph RAG
 
 We have moved beyond simple text-chunking to a **Dual-Store Architecture**:
 
@@ -20,7 +20,7 @@ We have moved beyond simple text-chunking to a **Dual-Store Architecture**:
     *   **Content**: NetworkX DiGraph.
     *   **Purpose**: Holds raw topology (nodes/edges) for future traversal and visualization.
 
-## 🔮 Roadmap: Graph Representation Learning
+## Roadmap: Graph Representation Learning
 
 We are addressing the limitation where "disconnected" facts (2-hop neighbors) are semantically distant.
 
