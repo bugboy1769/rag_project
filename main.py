@@ -6,6 +6,7 @@ from src.vector_store import VectorStore
 from src.retrieval import retrieve_topk
 from src.chatbot import build_prompt
 from src.graph_store import GraphStore
+from src.n2v_store import Node2VecStore
 
 def main():
     # 1. Setup
@@ -17,6 +18,7 @@ def main():
     # Try to load existing data
     v_store.load()
     t_store.load()
+    g_store.load()
     
     # Check if we need to ingest (if DB is empty)
     if not v_store.get_all() or not t_store.get_all():
@@ -24,7 +26,7 @@ def main():
         
         # 2. Ingestion
         print("Loading data ...")
-        chunks = load_file('data/cat_facts.txt')
+        chunks = load_file('data/got_plot.txt')
     
         # 3. Embedding and Ingestion
         print(f"Embedding {len(chunks)} chunks ...")
@@ -55,6 +57,14 @@ def main():
     else:
         print("Loaded existing data from disk. Skipping ingestion.")
     
+    n2v_store=Node2VecStore(g_store)
+    if not os.path.exists("n2v_model.pkl") and g_store.graph.nodes:
+        print("Training Node2Vec Topological Model...")
+        n2v_store.train()
+        n2v_store.save()
+    else:
+        n2v_store.load()
+    
 
     #4. Retrieval Loop
     while True:
@@ -68,10 +78,23 @@ def main():
         v_docs=retrieve_topk(query_emb, v_store, top_k=3)
         g_docs=retrieve_topk(query_emb, t_store, top_k=5)
 
+        #Structural Expansion
+        structural_context=[]
+        if g_docs:
+            top_triplet=g_docs[0][0]
+            potential_subject=top_triplet.split()[0]
+
+            similar_nodes=n2v_store.get_similar_nodes(potential_subject, top_k=2)
+
+            for node, score in similar_nodes:
+                node_emb=get_embedding(node)
+                related_facts=retrieve_topk(node_emb, t_store, top_k=1)
+                structural_context.extend(related_facts)
         #Format graph context
         g_text="\n".join([f"- {item[0]}" for item in g_docs])
+        s_text="\n".join([f"- {item[0]} (Structurally related to query)" for item in structural_context])
 
-        full_context=f"Vector Context:\n{v_docs}\n\nGraph Context:\n{g_text}"
+        full_context=f"Vector Context:\n{v_docs}\n\nGraph Context:\n{g_text}\n\nStructural Analogies:\n{s_text}"
         print(f"\nDEBUG: The full context being passed to the LLM is as follows: {full_context}")
 
         print('\nBuilding Prompt')

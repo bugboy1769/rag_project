@@ -4,3 +4,4 @@ ollama
 math
 pickle
 networkx
+node2vec

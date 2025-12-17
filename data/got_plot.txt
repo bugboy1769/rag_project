@@ -1,0 +1,29 @@
+Eddard Stark is the head of House Stark and Lord of Winterfell. He governs the North.
+Catelyn Stark is the wife of Eddard Stark. She advises him on political matters.
+Robb Stark is the eldest son of Eddard and Catelyn. He is the heir to Winterfell.
+Sansa Stark is the eldest daughter. She is betrothed to Joffrey Baratheon.
+Arya Stark is the younger daughter. She owns a sword named Needle.
+Bran Stark is a son of Eddard. He likes to climb walls.
+Jon Snow is the bastard son of Eddard Stark. He feels isolated from the family.
+Theon Greyjoy is the ward of Eddard Stark. He is essentially a hostage but treated well.
+
+Robert Baratheon is the King of the Seven Kingdoms. He rules from King's Landing.
+He is married to Cersei Lannister, the Queen.
+Joffrey Baratheon is the son of Robert and Cersei. He is cruel and sadistic.
+Jaime Lannister is the twin brother of Cersei. He is a member of the Kingsguard.
+Tyrion Lannister is the younger brother of Cersei and Jaime. He is a dwarf known for his wit.
+Tywin Lannister is the father of Cersei, Jaime, and Tyrion. He is the head of House Lannister.
+
+Daenerys Targaryen lies in exile in Essos. She is the last known Targaryen heir.
+Viserys Targaryen is the brother of Daenerys. He is abusive and wants the throne.
+Khal Drogo is a powerful warlord of the Dothraki. He marries Daenerys.
+Jorah Mormont is an exiled knight. He serves as an advisor to Daenerys.
+
+Jon Snow joins the Night's Watch. The Night's Watch guards the Wall.
+Samwell Tarly joins the Night's Watch. He becomes friends with Jon Snow.
+Jeor Mormont is the Lord Commander of the Night's Watch. He mentors Jon Snow.
+Tyrion Lannister visits the Wall to see the Night's Watch. He respects Jon Snow.
+
+House Stark is an ally of House Baratheon.
+House Lannister is a rival of House Stark.
+The Night's Watch is neutral in political affairs.
