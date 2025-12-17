@@ -6,13 +6,16 @@ class VectorStore:
         self.db=[]
         self.persist_path=persist_path
     
-    def add_documents(self, chunks, embeddings):
+    def add_documents(self, chunks, embeddings, metadata_list=None):
         """
         chunks: List[str]
         embeddings: List[List[float]]
         """
-        for chunk, embedding in zip(chunks, embeddings):
-            self.db.append((chunk, embedding))
+        if metadata_list is None:
+            metadata_list=[{} for _ in chunks]
+
+        for chunk, embedding, meta in zip(chunks, embeddings, metadata_list):
+            self.db.append((chunk, embedding, meta))
     
     def get_all(self):
         return self.db

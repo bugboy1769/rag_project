@@ -7,14 +7,21 @@ def extract_triplets(text_chunk):
     Uses LLM to parse text into JSON triplets
     """
     prompt = f"""
-    Analyze the following text and extract knowledge graph triplets.
-    Return JSON ONLY in this format: 
+    You are an expert Knowledge Graph Engineer.
+    Task: Extract 3-5 high-quality knowledge triplets from the text.
+    
+    Rules:
+    1. Subject and Object must be specific Named Entities (e.g., "Jon Snow", "Winterfell"). Avoid generic words like "He", "They", "It".
+    2. Predicates must be verbs denoting clear relationships (e.g., "father_of", "commands", "located_in").
+    3. Output strictly valid JSON.
+    
+    Text: {text_chunk}
+    
+    Output Format:
     [
         {{"subject": "Entity1", "predicate": "relation", "object": "Entity2"}},
         ...
     ]
-    
-    Text: {text_chunk}
     """
     response = get_llm_response(prompt)
     

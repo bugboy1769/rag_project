@@ -39,6 +39,7 @@ def main():
             triplets = extract_triplets(chunk)
             triplet_texts=[]
             triplet_embeddings=[]
+            triplet_metadatas=[]
             for t in triplets:
                 g_store.add_triplets(t['subject'], t['predicate'], t['object'])
                 text_rep=f"{t['subject']} {t['predicate']} {t['object']}"
@@ -46,9 +47,10 @@ def main():
                 triplet_texts.append(text_rep)
                 emb=get_embedding(text_rep)
                 triplet_embeddings.append(emb)
+                triplet_metadatas.append({"anchor_subject":t['subject']})
             
             if triplet_texts:
-                t_store.add_documents(triplet_texts, triplet_embeddings)
+                t_store.add_documents(triplet_texts, triplet_embeddings, triplet_metadatas)
 
         v_store.add_documents(chunks, embeddings)
         v_store.save()
@@ -81,10 +83,14 @@ def main():
         #Structural Expansion
         structural_context=[]
         if g_docs:
-            top_triplet=g_docs[0][0]
-            potential_subject=top_triplet.split()[0]
+            top_result=g_docs[0]
+            top_meta=top_result[2] #metadata
 
-            similar_nodes=n2v_store.get_similar_nodes(potential_subject, top_k=2)
+            potential_subject=top_meta.get("anchor_subject")
+            print(f"DEBUG: Node2Vec Anchor Subject -> {potential_subject}")
+
+            if potential_subject:
+                similar_nodes=n2v_store.get_similar_nodes(potential_subject, top_k=2)
 
             for node, score in similar_nodes:
                 node_emb=get_embedding(node)

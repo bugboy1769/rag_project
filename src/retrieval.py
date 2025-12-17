@@ -11,9 +11,14 @@ def retrieve_topk(query_embedding, vector_db, top_k=3):
     similarities=[]
     db_items = vector_db.get_all()
     similarities = []
-    for chunk, embedding in db_items:
+    for item in db_items:
+        if len(item)==3:
+             chunk, embedding, meta = item
+        else:
+             chunk, embedding=item
+             meta={}
         similarity=cosine_similarity(embedding, query_embedding)
-        similarities.append((chunk, similarity))
+        similarities.append((chunk, similarity, meta))
     similarities.sort(key=lambda x: x[1], reverse=True)
     return similarities[:top_k]
 
