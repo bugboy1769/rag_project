@@ -19,7 +19,7 @@ def main():
     t_store.load()
     
     # Check if we need to ingest (if DB is empty)
-    if not v_store.get_all() or not g_store.graph.nodes:
+    if not v_store.get_all() or not t_store.get_all():
         print("Data stores are empty. Starting ingestion...")
         
         # 2. Ingestion
