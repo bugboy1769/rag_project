@@ -1,0 +1,23 @@
+The University Karate Club is a historic martial arts institution currently facing a deep internal schism. 
+
+At the heart of the conflict are two central figures: Mr Hi and John A. 
+Mr Hi is the primary instructor of the karate club. He is a technical master who teaches traditional martial arts and emphasizes discipline and honor. 
+John A is the administrator of the karate club. He manages the club's finances, handles logistics, and controls the administrative overhead of the organization.
+
+The club has fractured into two distinct factions. 
+The Instructor's Faction is led by Mr Hi. This group consists of students who are deeply loyal to the teachings of the martial arts. 
+Member 1 is a dedicated student and close friend of Mr Hi. Member 1 trains under Mr Hi daily and serves as an informal mentor to newer students.
+Member 2 is friends with Mr Hi and often trains alongside Member 1. Member 2 is known for a strong commitment to the instructor's philosophy.
+Member 4 is also friends with Mr Hi. Member 4 is a regular practitioner who avoids the administrative politics to focus on training.
+
+In opposition, the Administrator's Faction is led by John A. This group prioritizes the organizational and financial stability of the club.
+Member 32 is a close ally and friend of John A. Member 32 supports the administrator's vision for club reform.
+Member 31 is friends with John A and manages the club's membership logistics.
+Member 30 is friends with John A and is considered a loyalist to the administrative bureaucracy.
+
+Positioned between these two warring sides is Member 3. 
+Member 3 is friends with both Mr Hi and John A. Because of these dual ties, Member 3 acts as a bridge, maintaining communication between the instructor and the administrator even as the factions move further apart.
+
+The tension reached a breaking point during a club meeting where Mr Hi led one faction in a protest, while John A led the other faction in a counter-proposal. 
+As a result of this fission, members who trained primarily with Mr Hi stayed with his new school, while members close to John A left to form a separate administrative body.
+Those who remained under Mr Hi's guidance include Member 1, Member 2, and Member 4, while those who departed with John A include Member 30, Member 31, and Member 32.

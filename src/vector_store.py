@@ -20,6 +20,18 @@ class VectorStore:
     def get_all(self):
         return self.db
 
+    def filter_by_metadata(self, key, value):
+        """
+        Returns all documents where metadata[key] == value
+        """
+        results = []
+        for item in self.db:
+            if len(item) == 3:
+                chunk, embedding, meta = item
+                if meta.get(key) == value:
+                    results.append((chunk, 1.0, meta)) # 1.0 similarity for exact match
+        return results
+
     def save(self):
         if self.persist_path:
             with open(self.persist_path, 'wb') as f:

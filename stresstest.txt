@@ -1,0 +1,12 @@
+cat_facts_stress_tests = {
+    "q1_direct_fact": "How much of its life has a nine-year-old cat been awake?",
+    "q2_causal_link": "What connects Pope Innocent VIII to the Black Death?",
+    "q3_structural_analogy": "Who is the 'Felicette' of the Egyptian period?",
+    "q4_mechanical_reasoning": "Why must a cat back down a tree instead of going head-first?",
+    "q5_set_analogy": "Which term is structurally equivalent to a 'clowder' in the context of numbers?",
+    "q6_biological_detail": "What is the specific mutation that prevents cats from tasting sweets?",
+    "q7_historical_intent": "Who invented the cat flap and what problem were they trying to solve?",
+    "q8_size_analogy": "If a Siberian Tiger is the biggest wildcat, who is the structural equivalent in the pedigreed world?",
+    "q9_sensory_role": "How do cats use scent glands to define their relationship with humans?",
+    "q10_multi_hop": "What was the relationship between the Spanish Inquisition and the explosion of the rat population?"
+}

@@ -19,14 +19,14 @@ def main():
     v_store.load()
     t_store.load()
     g_store.load()
-    
+
     # Check if we need to ingest (if DB is empty)
     if not v_store.get_all() or not t_store.get_all():
         print("Data stores are empty. Starting ingestion...")
         
         # 2. Ingestion
         print("Loading data ...")
-        chunks = load_file('data/got_plot.txt')
+        chunks = load_file('data/cat_facts.txt')
     
         # 3. Embedding and Ingestion
         print(f"Embedding {len(chunks)} chunks ...")
@@ -63,10 +63,15 @@ def main():
     if not os.path.exists("n2v_model.pkl") and g_store.graph.nodes:
         print("Training Node2Vec Topological Model...")
         n2v_store.train()
+        print(f"DEBUG: Nodes in Node2Vec model: {list(n2v_store.model.wv.index_to_key)[:10]}")
         n2v_store.save()
     else:
         n2v_store.load()
     
+    # Optional: Visualize Graph for Debugging
+    from src.visualize import draw_graph
+    draw_graph(g_store)
+
 
     #4. Retrieval Loop
     while True:
@@ -93,8 +98,7 @@ def main():
                 similar_nodes=n2v_store.get_similar_nodes(potential_subject, top_k=2)
 
             for node, score in similar_nodes:
-                node_emb=get_embedding(node)
-                related_facts=retrieve_topk(node_emb, t_store, top_k=1)
+                related_facts = t_store.filter_by_metadata("anchor_subject", node)
                 structural_context.extend(related_facts)
         #Format graph context
         g_text="\n".join([f"- {item[0]}" for item in g_docs])
