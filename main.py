@@ -81,36 +81,42 @@ def main():
 
         print('\nEmbedding Query')
         query_emb=get_embedding(query)
-        print('\nFetching Relevant Context')
+        
+        print('\nFetching Semantic Context (Vector Search)')
         v_docs=retrieve_topk(query_emb, v_store, top_k=3)
-        g_docs=retrieve_topk(query_emb, t_store, top_k=5)
-
-        #Structural Expansion
-        structural_context=[]
+        semantic_text = "\n".join([f"- {item[0]}" for item in v_docs])
+        
+        # Graph-Expanded Structural Context
+        print('\nFetching Structural Context (Graph-Expanded)')
+        structural_chunks = []
+        
+        # Step 1: Find anchor entity from triplet store
+        g_docs=retrieve_topk(query_emb, t_store, top_k=1)
         if g_docs:
-            top_result=g_docs[0]
-            top_meta=top_result[2] #metadata
-
-            potential_subject=top_meta.get("anchor_subject")
-            print(f"DEBUG: Node2Vec Anchor Subject -> {potential_subject}")
-
-            if potential_subject:
-                similar_nodes=n2v_store.get_similar_nodes(potential_subject, top_k=2)
-
-            for node, score in similar_nodes:
-                related_facts = t_store.filter_by_metadata("anchor_subject", node)
-                structural_context.extend(related_facts)
-        #Format graph context
-        g_text="\n".join([f"- {item[0]}" for item in g_docs])
-        s_text="\n".join([f"- {item[0]} (Structurally related to query)" for item in structural_context])
-
-        full_context=f"Vector Context:\n{v_docs}\n\nGraph Context:\n{g_text}\n\nStructural Analogies:\n{s_text}"
-        print(f"\nDEBUG: The full context being passed to the LLM is as follows: {full_context}")
+            top_meta = g_docs[0][2]
+            anchor = top_meta.get("anchor_subject")
+            print(f"DEBUG: Anchor Entity -> {anchor}")
+            
+            if anchor:
+                # Step 2: Get structurally similar nodes via Node2Vec
+                similar_nodes = n2v_store.get_similar_nodes(anchor, top_k=3)
+                print(f"DEBUG: Structurally Similar Nodes -> {similar_nodes}")
+                
+                # Step 3: For each similar node, search VECTOR STORE for original text
+                for node, score in similar_nodes:
+                    node_emb = get_embedding(node)
+                    related_chunks = retrieve_topk(node_emb, v_store, top_k=1)
+                    structural_chunks.extend(related_chunks)
+        
+        structural_text = "\n".join([f"- {item[0]}" for item in structural_chunks]) if structural_chunks else "(No structural context found)"
+        
+        print(f"\nDEBUG: Semantic Context:\n{semantic_text}")
+        print(f"\nDEBUG: Structural Context:\n{structural_text}")
 
         print('\nBuilding Prompt')
-        prompt=build_prompt(query, full_context)
+        prompt = build_prompt(query, semantic_text, structural_text)
         print('\nFetching LLM Response')
-        response=get_llm_response(prompt)
+        response = get_llm_response(prompt)
 
         print(f"\nResponse: {response}")
 

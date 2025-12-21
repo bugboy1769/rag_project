@@ -1,41 +1,73 @@
-# Nova: Agentic GraphRAG System
+# Nova: Structural GraphRAG System
 
-A modular RAG system that bridges the gap between **Semantic Search** (content) and **Topological Reasoning** (structure).
+**"Don't just find facts—find roles."**
 
-## Current Architecture: Semantic Graph RAG
+Project Nova is an advanced **Retrieval-Augmented Generation (RAG)** system that bridges the gap between **Semantic Search** (content) and **Topological Reasoning** (structure). Unlike traditional RAG, which relies solely on text similarity, Nova uses a Knowledge Graph to "route" queries to structurally relevant context.
 
-We have moved beyond simple text-chunking to a **Dual-Store Architecture**:
+---
 
-1.  **Vector Store (`vectordb.pkl`)**:
-    *   **Content**: Raw text chunks (Paragraphs).
-    *   **Purpose**: Retrives dense context and specific details.
-    *   **Model**: `bge-base-en-v1.5`
+## 🏗 Architecture: "Graph as Recommender"
 
-2.  **Triplet Store (`tripletdb.pkl`)**:
-    *   **Content**: LLM-extracted knowledge triplets (e.g., "Cat has_color Orange").
-    *   **Purpose**: **Proposition Retrieval**. Matches specific facts and relationships semantically, filtering out noise from high-degree nodes (e.g., "Cat") that purely topological search would retrieve.
-    *   **Mechanism**: Sentenized triplets encoded into the same vector space.
+We have moved beyond simple text-chunking to a **Dual-Store / Router Architecture**.
 
-3.  **Graph Store (`graph.pkl`)**:
-    *   **Content**: NetworkX DiGraph.
-    *   **Purpose**: Holds raw topology (nodes/edges) for future traversal and visualization.
+### 1. The Core Loop
+The system does *not* inject raw graph triplets into the prompt (which confuses LLMs). Instead, it uses the graph to **expand the search space**:
 
-## Roadmap: Graph Representation Learning
+```mermaid
+graph LR
+    Q[Query] --> T[Topic Extraction]
+    T -->|Anchor Entity| G[Graph Store]
+    G -->|Node2Vec| S[Similar Structural Nodes]
+    S -->|Entity Lookup| V[Vector Store]
+    V -->|Original Text| C[Structural Context]
+    Q -->|Embedding| V2[Vector Store]
+    V2 -->|Cosine Sim| C2[Semantic Context]
+    C --> P[LLM Prompt]
+    C2 --> P
+```
 
-We are addressing the limitation where "disconnected" facts (2-hop neighbors) are semantically distant.
+### 2. The Stores
+*   **Vector Store (`v_store`)**: Holds the specific, rich text chunks.
+*   **Triplet Store (`t_store`)**: A "Card Catalog" for the graph. Maps entities to triplets.
+*   **Graph Store (`g_store`)**: A NetworkX graph purely for topology (connectivity).
+*   **Node2Vec Model**: A trained embedding model that understands *graph structure* (roles) rather than *text meaning*.
 
-### Phase A: Node2Vec (Topological Embeddings)
-*   **Goal**: Learn embeddings based purely on *random walks* (structure), ignoring text content.
-*   **Hypothesis**: Nodes that share structural roles or communities will be clustered together, enabling "structural retrieval".
+### 3. Dual-Context Prompting
+The LLM receives two distinct streams of information:
+*   **SEMANTIC CONTEXT**: "Here are facts directly related to your keywords." (e.g., Cat sleep times)
+*   **STRUCTURAL CONTEXT**: "Here are things that play a similar role in the system." (e.g., Other predators that hunt in this specific way)
 
-### Phase B: Graph Convolutional Networks (GCNs)
-*   **Goal**: Fuse **Content** + **Structure**.
-*   **Mechanism**: Message passing layers where a node aggregates features from its neighbors.
-*   **Enriched Embeddings**: The final vector for "Cat" will mathematically contain information propagated from "Heart" -> "Mammal" -> "Cat", enabling implicit multi-hop reasoning.
+---
 
-### Comparison Study
-We will implement both modules to benchmark:
-1.  **Naive RAG** (Baseline)
-2.  **Semantic Graph RAG** (Current)
-3.  **Node2Vec** (Structure Only)
-4.  **GCN** (Structure + Content)
+## 🧪 Stress Test Results: `cat_facts.txt`
+
+We ran extensive stress tests to validate the "Structural Analogies" capability.
+
+| Question | Type | Nova's Performance | Key Insight |
+| :--- | :--- | :--- | :--- |
+| *"Who invented the cat flap?* | **Factual** | ✅ **Perfect** (Isaac Newton, Spithead) | Semantic retrieval handled this easily. |
+| *"Why must a cat back down a tree?"* | **Structural** | ✅ **Best Answer** | The graph correctly linked "claws" to "climbing mechanics" without direct keyword overlap. |
+| *"Felicette of Egypt?"* | **Analogy** | ❌ **Hallucination** | LLM hallucinated "Daenerys" due to training data leakage. **Fix**: Stricter prompt instructions. |
+| *"Jon Snow in Answer"* | **Bug** | ❌ **Contamination** | Stale graph data from a previous run persisted. **Fix**: Implemented strict `rm *.pkl` hygiene. |
+
+**Top Finding**: The "Graph as Recommender" pattern eliminated the "broken English triplet" problem, resulting in much higher quality answers than raw graph injection.
+
+---
+
+## 🚀 Research & Roadmap
+
+### Current Feature: Node2Vec (Active)
+*   **What it does**: Learns low-dimensional representations of nodes based on random walks.
+*   **Why**: It captures "Structural Equivalence". Nodes that bridge communities look similar, even if they don't share neighbors.
+
+### Next Step: Hyperbolic Embeddings (Planned)
+*   **Problem**: Euclidean space (dot product) creates distortion for hierarchical trees (taxonomies).
+*   **Solution**: Migrate the Graph Store to a **Poincaré Ball** model.
+*   **Projected Gain**: Better representation of "Is-A" hierarchies with fewer dimensions.
+
+### Production Comparison
+| Feature | Project Nova | Microsoft GraphRAG |
+| :--- | :--- | :--- |
+| **Structural Analogies** | ✅ (Node2Vec) | ❌ |
+| **Ingestion Quality** | ⚠️ (Needs Validation) | ✅ (Entity Resolution) |
+| **Retrieval Mode** | ✅ Dual-Context | ✅ Community Summaries |

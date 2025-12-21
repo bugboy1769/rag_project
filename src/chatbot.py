@@ -1,16 +1,23 @@
-def build_prompt(query, context_text):
-    prompt = f"""You are an intelligent assistant capable of Structural Reasoning.
-    
-    Context:
-    {context_text}
-    
-    ---------------------------------------------------
-    Guidance on "Structural Analogies":
-    - These are entities that play a similar ROLE in a different context.
-    - Example: If the user asks about "Jon Snow" (Leader of Watch), and the analogy is "Daenerys" (Leader of Dothraki), use this to draw parallels.
-    - DO NOT say "Daenerys is Jon Snow". Say "Structurally, Jon Snow is similar to Daenerys because..."
-    ---------------------------------------------------
-    Question: 
-    {query}
-    """
+def build_prompt(query, semantic_context, structural_context):
+    prompt = f"""You are an intelligent assistant with access to two types of context.
+
+## SEMANTIC CONTEXT (Direct Similarity)
+Use this for factual questions. These are text passages that are semantically similar to the query.
+{semantic_context}
+
+## STRUCTURAL CONTEXT (Graph-Expanded)
+Use this for relationship, chain-of-reasoning, or "who is similar to whom" questions.
+These passages were found by traversing a knowledge graph to find structurally related entities.
+{structural_context}
+
+---
+GUIDANCE:
+- For "What is X?" questions: Prioritize SEMANTIC CONTEXT.
+- For "How is X related to Y?" or "Who plays a similar role?" questions: Prioritize STRUCTURAL CONTEXT.
+- If STRUCTURAL CONTEXT is empty, rely solely on SEMANTIC CONTEXT.
+- Never invent information. If neither context answers the question, say "I don't have enough information."
+---
+
+Question: {query}
+"""
     return prompt

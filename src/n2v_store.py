@@ -8,7 +8,7 @@ class Node2VecStore:
         self.persist_path=persist_path
         self.model=None
     
-    def train(self, dimensions=64, walk_length=30, num_walks=200):
+    def train(self, dimensions=64, walk_length=100, num_walks=500):
 
         # We want to favor Structural Equivalence (q > 1) vs Community (q < 1)
         # We are using p=1, q=4 to encourage BFS-like behavior (Structural Roles)
